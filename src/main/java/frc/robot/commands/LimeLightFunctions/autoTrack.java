@@ -5,26 +5,25 @@
 package frc.robot.commands.LimeLightFunctions;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Drive.LimeLight;
+import frc.robot.Constants.InitSubs;
+import frc.robot.subsystems.Drive.LightHouse;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class autoTrack extends Command {
-  LimeLight m_limeLight;
-  public autoTrack(LimeLight param_limeLight) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    m_limeLight = param_limeLight;
-    addRequirements(m_limeLight);
+  public autoTrack(LightHouse param_limeLight) {
+    InitSubs.i_lightHouse = param_limeLight;
+    addRequirements(InitSubs.i_lightHouse);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    m_limeLight.autoTrack(true);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    InitSubs.i_lightHouse.autoTrack(true);
+  }
 
   // Called once the command ends or is interrupted.
   @Override

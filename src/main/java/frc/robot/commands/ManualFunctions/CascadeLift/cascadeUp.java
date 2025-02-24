@@ -5,22 +5,20 @@
 package frc.robot.commands.ManualFunctions.CascadeLift;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Functions.Cascade;
+import frc.robot.Constants.InitSubs;
+import frc.robot.subsystems.Actions.Cascade;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class cascadeUp extends Command {
-  /** Creates a new resetGyroValue. */
-  Cascade m_cascade;
   public cascadeUp(Cascade param_cascade) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    m_cascade = param_cascade;
-    addRequirements(m_cascade); 
+    InitSubs.i_cascade = param_cascade;
+    addRequirements(InitSubs.i_cascade); 
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_cascade.cascadeUp();
+    InitSubs.i_cascade.cascadeUp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -5,16 +5,20 @@
 package frc.robot.commands.ManualFunctions.CoralEffector;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Functions.Coral;
+import frc.robot.Constants.InitSubs;
+import frc.robot.subsystems.Actions.Coral;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class coralStop extends Command {
-  /** Creates a new resetGyroValue. */
-  Coral m_coral;
   public coralStop(Coral param_coral) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    m_coral = param_coral;
-    addRequirements(m_coral); 
+    InitSubs.i_coral = param_coral;
+    addRequirements(InitSubs.i_coral); 
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    InitSubs.i_coral.coralStop();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -2,19 +2,17 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.SetPositions.Algae;
+package frc.robot.commands.SetPositions.Wrist;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Functions.Algae;
+import frc.robot.Constants.InitSubs;
+import frc.robot.subsystems.Actions.Wrist;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class algaeL1 extends Command {
-  /** Creates a new resetGyroValue. */
-  Algae m_algae;
-  public algaeL1(Algae param_algae) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    m_algae = param_algae;
-    addRequirements(m_algae); 
+public class wAlgaeL1 extends Command {
+  public wAlgaeL1(Wrist param_wrist) {
+    InitSubs.i_wrist = param_wrist;
+    addRequirements(InitSubs.i_wrist); 
   }
 
   // Called when the command is initially scheduled.

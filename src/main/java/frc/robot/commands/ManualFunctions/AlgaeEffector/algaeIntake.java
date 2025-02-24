@@ -5,21 +5,20 @@
 package frc.robot.commands.ManualFunctions.AlgaeEffector;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Functions.Algae;
+import frc.robot.Constants.InitSubs;
+import frc.robot.subsystems.Actions.Algae;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class algaeIntake extends Command {
-  /** Creates a new resetGyroValue. */
-  Algae m_algae;
   public algaeIntake(Algae param_algae) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    m_algae = param_algae;
-    addRequirements(m_algae); 
+    InitSubs.i_algae = param_algae;
+    addRequirements(InitSubs.i_algae); 
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    InitSubs.i_algae.algaeIntake();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

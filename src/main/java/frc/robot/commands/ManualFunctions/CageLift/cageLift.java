@@ -5,22 +5,20 @@
 package frc.robot.commands.ManualFunctions.CageLift;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Drive.DriveSubsystem;
+import frc.robot.Constants.InitSubs;
+import frc.robot.subsystems.Actions.Lift;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class cageLift extends Command {
-  /** Creates a new resetGyroValue. */
-  DriveSubsystem m_robotDrive;
-  public cageLift(DriveSubsystem param_robotDrive) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    m_robotDrive = param_robotDrive;
-    addRequirements(m_robotDrive); 
+  public cageLift(Lift param_lift) {
+    InitSubs.i_lift = param_lift;
+    addRequirements(InitSubs.i_lift); 
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_robotDrive.zeroHeading();
+    InitSubs.i_lift.cageLift();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

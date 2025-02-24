@@ -158,7 +158,6 @@ public class DriveSubsystem extends SubsystemBase {
     double xSpeedDelivered = xSpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
-
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, 
@@ -170,7 +169,6 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
     m_rearRight.setDesiredState(swerveModuleStates[3]);
-
   }
 
   /**
@@ -309,8 +307,6 @@ private void drive(ChassisSpeeds speeds, boolean fieldRelative) {
     try
     {
       config = RobotConfig.fromGUISettings(); //needs to be in a try/catch
-      
-      final boolean enableFeedforward = true;
       
       // Configure AutoBuilder last. Other sources say you can put this in your DriveSubsystem but I had errors doing that.
       AutoBuilder.configure(
