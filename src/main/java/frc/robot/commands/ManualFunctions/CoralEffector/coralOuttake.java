@@ -15,6 +15,12 @@ public class coralOuttake extends Command {
     addRequirements(InitSubs.i_coral); 
   }
 
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+    InitSubs.i_coral.coralOuttake();
+  }
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {}

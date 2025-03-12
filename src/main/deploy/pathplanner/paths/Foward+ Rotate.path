@@ -8,7 +8,7 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.25,
+        "x": 3.0000000000000004,
         "y": 7.0
       },
       "isLocked": false,
@@ -16,11 +16,11 @@
     },
     {
       "anchor": {
-        "x": 2.0,
+        "x": 6.0,
         "y": 7.0
       },
       "prevControl": {
-        "x": 1.75,
+        "x": 5.0,
         "y": 7.0
       },
       "nextControl": null,
@@ -41,11 +41,11 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": 90.0
+    "velocity": 0,
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Tests",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

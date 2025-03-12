@@ -22,7 +22,9 @@ public class wAlgaeBarge extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    InitSubs.i_wrist.wAlgaeBarge();
+  }
 
   // Called once the command ends or is interrupted.
   @Override

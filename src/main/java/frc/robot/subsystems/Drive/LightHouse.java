@@ -4,8 +4,12 @@
 
 package frc.robot.subsystems.Drive;
 
+import java.util.Optional;
+
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
@@ -17,8 +21,21 @@ import frc.utils.LimeLightHelpers;
 public class LightHouse extends SubsystemBase {
   /** Creates a new LimeLight(LightHouse). */
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-
-  public LightHouse() {}
+  int[] allianceReefArray;
+  int[] allianceFeederArray;
+  Optional<Alliance> alliance = DriverStation.getAlliance();
+  public LightHouse() {
+    if(alliance.get() == Alliance.Red){
+      allianceReefArray = new int[] {6,7,8,9,10,11};
+      allianceFeederArray = new int[] {1,2};
+     }else if (alliance.get() == Alliance.Blue){
+      allianceReefArray = new int[] {17,18,19,20,21,22};
+      allianceFeederArray = new int[] {12,13};
+     }else{
+      allianceReefArray = new int[] {6,7,8,9,10,11,17,18,19,20,21,22};
+      allianceFeederArray = new int[] {1,2,12,13};
+     }
+  }
 
   private double zAxis(double rawZ){
     if(rawZ >= -.2 && rawZ <= .2){
@@ -81,7 +98,7 @@ public class LightHouse extends SubsystemBase {
   public void autoTrack(boolean fieldRelative) {
      var rot_lightHouse = lightHouse_aim_proportional();
      double rot = 0.0;
-      if(LimeLightHelpers.getTV("LightHouse")==true){
+      if(LimeLightHelpers.getTV("LightHouse")==true /*&& LimeLightHelpers.getFiducialID("lightHouse") == allianceReefArray.*/){
          rot = rot_lightHouse;
          if(rot_lightHouse >=-.5 || rot_lightHouse <=.5){
             SmartDashboard.putBoolean("AprilTagTrack", true);
@@ -111,7 +128,7 @@ public void autoAlign(boolean fieldRelative) {
   double rot = 0.0;
   double xSpeed = 0.0;
   double ySpeed = 0.0;
-   if(LimeLightHelpers.getTV("lightHouse") == true){
+   if(LimeLightHelpers.getTV("lightHouse") == true /*&& LimeLightHelpers.getFiducialID("lightHouse") : allianceReefArray*/){
       rot = rot_lightHouse;
       xSpeed = forward_lightHouse;
       ySpeed = sideways_lightHouse;

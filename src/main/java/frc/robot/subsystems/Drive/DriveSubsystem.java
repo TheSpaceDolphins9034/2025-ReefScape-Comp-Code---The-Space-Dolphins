@@ -65,12 +65,11 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kBackRightChassisAngularOffset);
 
   // The gyro sensor
-  private Pigeon2 m_seagullGyro = new Pigeon2(2);
+  //private Pigeon2 m_seagullGyro = new Pigeon2(2); corraly rant
   private PigeonIMU m_seagullIMU = new PigeonIMU(2);
-  public final PIDConstants pidTranslation = new PIDConstants(.008, 0.0, 0.0);
-  public final PIDConstants pidRotation = new PIDConstants(.008, 0.0, 0.0);
+  public final PIDConstants pidTranslation = new PIDConstants(.075, 0.0, 0.01);
+  public final PIDConstants pidRotation = new PIDConstants(.075, 0.0, 0.0);
   //private SwerveDriveOdometry swerveOdometry = new SwerveDriveOdometry(DriveConstants.kDriveKinematics, getYaw(), );
-  //private ADXRS450_Gyro m_gyro = new ADXRS450_Gyro();
 
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
@@ -133,6 +132,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
+    //zeroHeading();
     m_odometry.resetPosition(
         Rotation2d.fromDegrees(m_seagullIMU.getYaw()),
         new SwerveModulePosition[] {
@@ -205,7 +205,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
-    m_seagullGyro.reset();
+   // m_seagullGyro.reset(); corrales rant
     m_seagullIMU.setYaw(0);
   }
 

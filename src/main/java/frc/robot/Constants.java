@@ -10,7 +10,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Servo;
 import frc.robot.subsystems.Actions.Algae;
 import frc.robot.subsystems.Actions.Cascade;
 import frc.robot.subsystems.Actions.Coral;
@@ -21,6 +23,7 @@ import frc.robot.subsystems.Drive.LightHouse;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+
 
 
 /**
@@ -42,10 +45,12 @@ public final class Constants {
       public static final int CoralID = 8;
       public static final int AlgaeID = 7;
       public static final int LiftID = 6;
-      public static final int FunnelID = 5;
-      public static final int WristID = 4;
+      public static final int WristID = 5;
+      public static final int ServoReleaseID = 0;
     //sensors
-      public static final int coralSwitchID = 1;
+      public static final int coralSwitchID = 2;
+      public static final int cascadeSwitchID = 3;
+      public static final int ultraSonicID = 4;
 
     //These are the initialization of Kepler's motors
     public static final class Motors{
@@ -53,12 +58,15 @@ public final class Constants {
       public static final SparkMax m_coral = new SparkMax(Constants.CoralID, MotorType.kBrushless);
       public static final SparkMax m_algae = new SparkMax(Constants.AlgaeID, MotorType.kBrushless);
       public static final SparkMax m_lift = new SparkMax(Constants.LiftID, MotorType.kBrushless);
-      public static final SparkMax m_funnel = new SparkMax(Constants.FunnelID, MotorType.kBrushless);
-      public static final SparkMax m_wrist = new SparkMax(Constants.FunnelID, MotorType.kBrushless);
+      public static final SparkMax m_wrist = new SparkMax(Constants.WristID, MotorType.kBrushless);
+      public static final Servo m_release = new Servo(ServoReleaseID);
     }
     //These are the initialization of Kepler's sensors
     public static final class Sensors{
       public static final DigitalInput m_coralSwitch = new DigitalInput(coralSwitchID);
+      public static final DigitalInput m_cascadeSwitch = new DigitalInput(cascadeSwitchID);
+      public static final AnalogInput m_ultraSonic = new AnalogInput(ultraSonicID);
+
     }
 
     //These are the initialization of Kepler's subsystems

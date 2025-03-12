@@ -18,6 +18,7 @@ public class cCoralL4 extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    InitSubs.i_cascade.cCoralL4();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

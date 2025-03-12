@@ -9,8 +9,8 @@ import frc.robot.Constants.InitSubs;
 import frc.robot.subsystems.Actions.Wrist;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class wCoralL4 extends Command {
-  public wCoralL4(Wrist param_wrist) {
+public class wLevels extends Command {
+  public wLevels(Wrist param_wrist) {
     InitSubs.i_wrist = param_wrist;
     addRequirements(InitSubs.i_wrist); 
   }
@@ -22,7 +22,9 @@ public class wCoralL4 extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    InitSubs.i_wrist.wLevels();
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -34,4 +36,3 @@ public class wCoralL4 extends Command {
     return false;
   }
 }
-

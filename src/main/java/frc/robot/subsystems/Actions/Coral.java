@@ -4,32 +4,24 @@
 
 package frc.robot.subsystems.Actions;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //Constants
 import frc.robot.Constants.Motors;
+import frc.robot.Constants.Sensors;
 //Commands
 import frc.robot.commands.ManualFunctions.CoralEffector.coralStop;
 
 public class Coral extends SubsystemBase {
-  private final AnalogInput m_ultraSonic;
-  public int distanceUS = 0;
   public Coral() { 
-    m_ultraSonic = new AnalogInput(3);
     setDefaultCommand(new coralStop(this));
   }
 
   @Override
   public void periodic() {
-    distanceUS = m_ultraSonic.getValue();
-    SmartDashboard.putNumber("Distance", distanceUS);
   }
 
   //manuals
-  public void coralIntake(){
-    Motors.m_coral.set(.2);
-  }
   public void coralOuttake(){
     Motors.m_coral.set(.5);
   }
@@ -39,10 +31,6 @@ public class Coral extends SubsystemBase {
 
   //set positions
   public void coralFeed(){
-    if(m_ultraSonic.getValue() > 310){
-      Motors.m_coral.set(-.25);
-    }else if(m_ultraSonic.getValue() <= 310){
-      Motors.m_coral.stopMotor();
-    }
+    
   }
 }
