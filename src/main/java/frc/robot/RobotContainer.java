@@ -10,17 +10,16 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 //constants
 import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.Sensors;
+import frc.robot.Constants.Positions;
 import frc.robot.Constants.InitSubs;
 //commands
 import frc.robot.commands.Extra.resetGyroValue;
@@ -29,15 +28,19 @@ import frc.robot.commands.ManualFunctions.AlgaeEffector.algaeIntake;
 import frc.robot.commands.ManualFunctions.AlgaeEffector.algaeOuttake;
 import frc.robot.commands.ManualFunctions.AlgaeEffector.algaeStop;
 import frc.robot.commands.ManualFunctions.ArmWrist.wristDown;
+import frc.robot.commands.ManualFunctions.ArmWrist.wristStop;
 import frc.robot.commands.ManualFunctions.ArmWrist.wristUp;
 import frc.robot.commands.ManualFunctions.CageLift.cageDelift;
 import frc.robot.commands.ManualFunctions.CageLift.cageLift;
 import frc.robot.commands.ManualFunctions.CageLift.cageRelease;
-import frc.robot.commands.ManualFunctions.CageLift.cageReset;
+import frc.robot.commands.ManualFunctions.CageLift.cageStop;
 import frc.robot.commands.ManualFunctions.CascadeLift.cascadeDown;
 import frc.robot.commands.ManualFunctions.CascadeLift.cascadeStop;
 import frc.robot.commands.ManualFunctions.CascadeLift.cascadeUp;
 import frc.robot.commands.ManualFunctions.CoralEffector.coralOuttake;
+import frc.robot.commands.ManualFunctions.CoralEffector.coralStop;
+import frc.robot.commands.SetPositions.cPosition;
+import frc.robot.commands.SetPositions.wPosition;
 import frc.robot.commands.SetPositions.Cascade.cAlgaeBarge;
 import frc.robot.commands.SetPositions.Cascade.cAlgaeFloorIntake;
 import frc.robot.commands.SetPositions.Cascade.cAlgaeHolder;
@@ -47,7 +50,6 @@ import frc.robot.commands.SetPositions.Cascade.cAlgaeProcessor;
 import frc.robot.commands.SetPositions.Cascade.cCoralFeed;
 import frc.robot.commands.SetPositions.Wrist.wAlgaeLevelGrab;
 import frc.robot.commands.SetPositions.Wrist.wAlgaeProcessor;
-import frc.robot.commands.SetPositions.Wrist.wCoralFeed;
 import frc.robot.commands.SetPositions.Wrist.wAlgaeBarge;
 import frc.robot.commands.SetPositions.Wrist.wAlgaeFloorIntake;
 import frc.robot.commands.SetPositions.Wrist.wAlgaeHolder;
@@ -55,7 +57,9 @@ import frc.robot.commands.SetPositions.Cascade.cCoralL1;
 import frc.robot.commands.SetPositions.Cascade.cCoralL2;
 import frc.robot.commands.SetPositions.Cascade.cCoralL3;
 import frc.robot.commands.SetPositions.Cascade.cCoralL4;
+import frc.robot.commands.SetPositions.Cascade.cascadeBelow0;
 import frc.robot.commands.SetPositions.Wrist.wLevels;
+import frc.robot.commands.SetPositions.Wrist.wZero;
 import frc.robot.commands.LimeLightFunctions.autoAlign;
 
 /*
@@ -73,10 +77,13 @@ public class RobotContainer {
    */
 
   public RobotContainer() {
-    NamedCommands.registerCommand("Feed", new ParallelCommandGroup(new cCoralFeed(InitSubs.i_cascade), new wCoralFeed(InitSubs.i_wrist)));
-    NamedCommands.registerCommand("L4", new ParallelCommandGroup(new cCoralL4(InitSubs.i_cascade), new wLevels(InitSubs.i_wrist)));
-    NamedCommands.registerCommand("autoAlign", new autoAlign(InitSubs.i_lightHouse));
-    //NamedCommands.registerCommand("coralSwitch", Sensors.m_coralSwitch.get() == true);
+    NamedCommands.registerCommand("L4", new cCoralL4(InitSubs.i_cascade).until(() -> InitSubs.i_cascade.m_cEncoder.getPosition()<=-150));
+    NamedCommands.registerCommand("Outtake", new coralOuttake(InitSubs.i_coral));
+    NamedCommands.registerCommand("StopOuttake", new coralStop(InitSubs.i_coral));
+    NamedCommands.registerCommand("wAlgaeLevelIntake", new ParallelCommandGroup(new wAlgaeLevelGrab(InitSubs.i_wrist), new algaeIntake(InitSubs.i_algae)).until(() -> InitSubs.i_wrist.m_wEncoder.getPosition()>=8));
+    NamedCommands.registerCommand("cAlgaeLevel1", new cAlgaeHolder(InitSubs.i_cascade).until(() -> InitSubs.i_cascade.m_cEncoder.getPosition()<=-80));
+    NamedCommands.registerCommand("Reset", new ParallelCommandGroup(new wZero(InitSubs.i_wrist), new cCoralFeed(InitSubs.i_cascade)));
+
     // Configure the button bindings
     configureButtonBindings();
     configureJoystickButtonBindings();
@@ -127,14 +134,38 @@ public class RobotContainer {
     //          -- Establishing joystick Buttons --
     //Driver
     new JoystickButton(m_driverController, 11).whileTrue(new resetGyroValue(InitSubs.i_robotDrive));
-    new JoystickButton(m_driverController, 1).whileTrue(new autoTrack(InitSubs.i_lightHouse));
-    new JoystickButton(m_driverController, 0).whileTrue(new autoAlign(InitSubs.i_lightHouse));
-
+    new JoystickButton(m_driverController, 0).whileTrue(new autoTrack(InitSubs.i_lightHouse));
+    new JoystickButton(m_driverController, 1).whileTrue(new autoAlign(InitSubs.i_robotDrive, false));
+    new JoystickButton(m_driverController, 10).whileTrue(new cageDelift(InitSubs.i_lift));
+    new JoystickButton(m_driverController,8).whileTrue(new cageLift(InitSubs.i_lift));
+    new JoystickButton(m_driverController,7).whileTrue(new cageRelease(InitSubs.i_liftServo));
     //                  -- Operation Pad --  
-    new JoystickButton(m_operatorController,3).whileTrue(new wAlgaeFloorIntake(InitSubs.i_wrist));
-    new JoystickButton(m_operatorController,4).whileTrue(new wLevels(InitSubs.i_wrist));
-    new JoystickButton(m_operatorController,8).whileTrue(new cageRelease(InitSubs.i_lift));
-    new JoystickButton(m_operatorController,11).whileTrue(new wAlgaeBarge(InitSubs.i_wrist));
+    //new JoystickButton(m_operatorController,3).whileTrue(new algaeOuttake(InitSubs.i_algae));
+    //new JoystickButton(m_operatorController,4).whileTrue(new algaeIntake(InitSubs.i_algae));
+    new JoystickButton(m_operatorController,1).onTrue(new SequentialCommandGroup(new wPosition(InitSubs.i_wrist, Positions.wLevels), new cPosition(InitSubs.i_cascade, Positions.cZero), new wZero(InitSubs.i_wrist)));
+    // 2,3, and 4 are coral set positions
+    new JoystickButton(m_operatorController,10).onTrue(new ParallelCommandGroup(new wPosition(InitSubs.i_wrist, Positions.wAlgaeFloorIntake), new algaeIntake(InitSubs.i_algae))); 
+    new JoystickButton(m_operatorController,9).onTrue(new ParallelCommandGroup(new wPosition(InitSubs.i_wrist, Positions.wAlgaeLevelGrab), new algaeIntake(InitSubs.i_algae)));
+    new JoystickButton(m_operatorController,7).whileTrue(new ParallelCommandGroup(new cascadeDown(InitSubs.i_cascade), new wLevels(InitSubs.i_wrist)));
+    new JoystickButton(m_operatorController,8).whileTrue(new ParallelCommandGroup(new cascadeUp(InitSubs.i_cascade), new wLevels(InitSubs.i_wrist)));
+    new JoystickButton(m_operatorController,7).onFalse(new wLevels(InitSubs.i_wrist));
+    new JoystickButton(m_operatorController,8).onFalse(new wLevels(InitSubs.i_wrist));
+    new JoystickButton(m_operatorController,6).whileTrue(new wristDown(InitSubs.i_wrist));
+    new JoystickButton(m_operatorController,5).whileTrue(new wristUp(InitSubs.i_wrist));
+    new JoystickButton(m_operatorController,11).whileTrue(new coralOuttake(InitSubs.i_coral));
+    new JoystickButton(m_operatorController,12).whileTrue(new algaeOuttake(InitSubs.i_algae));
+    new Trigger(() -> m_operatorController.getRawAxis(0) < -.5).whileTrue(new algaeIntake(InitSubs.i_algae));
+    new Trigger(() -> m_operatorController.getRawAxis(1) < -.5).onTrue(new wAlgaeProcessor(InitSubs.i_wrist));
+    new Trigger(() -> m_operatorController.getRawAxis(1) < -.5).onFalse(new wAlgaeProcessor(InitSubs.i_wrist));
+    
+    new JoystickButton(m_operatorController,0).whileTrue(
+      new ParallelCommandGroup(
+        new algaeStop(InitSubs.i_algae),
+        new cascadeStop(InitSubs.i_cascade),
+        new coralStop(InitSubs.i_coral),
+        new wristStop(InitSubs.i_wrist),
+        new cageStop(InitSubs.i_lift)
+      ) );
       //               -- Manual Functions--
         //Algae
           new JoystickButton(m_operatorController,0).whileTrue(new algaeOuttake(InitSubs.i_algae));
@@ -142,18 +173,23 @@ public class RobotContainer {
           new JoystickButton(m_operatorController,0).whileTrue(new coralOuttake(InitSubs.i_coral));
       //                -- Set Positions --
         //Algae
+
+        //Algae Reef Grab
+          new JoystickButton(m_operatorController,0).onTrue(
+            new SequentialCommandGroup(
+              new ParallelCommandGroup(
+                new cAlgaeL1(InitSubs.i_cascade),
+                new wLevels(InitSubs.i_wrist)),
+              new wAlgaeLevelGrab(InitSubs.i_wrist)
+            )
+          );
           new JoystickButton(m_operatorController,0).onTrue(
             new ParallelCommandGroup(
-              new cAlgaeL1(InitSubs.i_cascade),
+              new cAlgaeL2(InitSubs.i_cascade),
               new wLevels(InitSubs.i_wrist)
             )
           );
-        new JoystickButton(m_operatorController,0).onTrue(
-          new ParallelCommandGroup(
-            new cAlgaeL2(InitSubs.i_cascade),
-            new wLevels(InitSubs.i_wrist)
-          )
-        );
+        
         new JoystickButton(m_operatorController,0).onTrue(
         new ParallelCommandGroup(
           new cAlgaeHolder(InitSubs.i_cascade),
@@ -181,29 +217,30 @@ public class RobotContainer {
         )
         );
       //Coral
+      //Coral Scorers
         new JoystickButton(m_operatorController,0).onTrue(
           new ParallelCommandGroup(
             new cCoralL1(InitSubs.i_cascade),
             new wLevels(InitSubs.i_wrist)
           )
         );
-        new JoystickButton(m_operatorController,0).onTrue(
+        new JoystickButton(m_operatorController,2).onTrue(
           new ParallelCommandGroup(
             new cCoralL2(InitSubs.i_cascade),
-            new wLevels(InitSubs.i_wrist)
+            new wPosition(InitSubs.i_wrist, Positions.wLevels)
           )
         );
-        new JoystickButton(m_operatorController,0).onTrue(
+        new JoystickButton(m_operatorController,3).onTrue(
           new ParallelCommandGroup(
             new cCoralL3(InitSubs.i_cascade),
-            new wLevels(InitSubs.i_wrist)
+            new wPosition(InitSubs.i_wrist, Positions.wLevels)
           )
         );
-        new JoystickButton(m_operatorController,0).onTrue(
-          new ParallelCommandGroup(
+        new JoystickButton(m_operatorController,4).onTrue(
+            new ParallelCommandGroup(
             new cCoralL4(InitSubs.i_cascade),
-            new wLevels(InitSubs.i_wrist)
-          )
+            new wPosition(InitSubs.i_wrist, Positions.wLevels)
+            )
         );
       // Others
       new JoystickButton(m_operatorController,0).onTrue(
@@ -212,12 +249,6 @@ public class RobotContainer {
           new wLevels(InitSubs.i_wrist)
         )
       );
-    /* ECT.
-    new JoystickButton(m_operatorController, 3).onTrue(new cascadeStop(m_cascade));
-    new JoystickButton(m_operatorController, 4).whileTrue(new cascadeUp(m_cascade));
-    new JoystickButton(m_operatorController, 3).onTrue(new cascadeStop(m_cascade));
-    new JoystickButton(m_operatorController, 2).whileTrue(new cascadeDown(m_cascade));
-    */
     }
 
   /**
@@ -225,9 +256,5 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  /* 
-  public Command getAutonomousCommand() {
-    return InitSubs.i_robotDrive.getAutonomousCommand("Foward + Rotate");
-  }
-    */
+    
 }

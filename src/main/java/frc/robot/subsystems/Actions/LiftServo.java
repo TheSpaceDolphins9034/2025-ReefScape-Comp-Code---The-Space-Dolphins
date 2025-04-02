@@ -8,26 +8,23 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //Constants
 import frc.robot.Constants.Motors;
 //Commands
-import frc.robot.commands.ManualFunctions.CageLift.cageStop;
+import frc.robot.commands.ManualFunctions.CageLift.cageReset;
 
-public class Lift extends SubsystemBase {
-  public boolean released = false;
-  public Lift() {
-  setDefaultCommand(new cageStop(this));
+public class LiftServo extends SubsystemBase {
+  public LiftServo() {
+  setDefaultCommand(new cageReset(this));
   }
 
   @Override
   public void periodic() {
   }
 
-  //Commands
-  public void cageLift(){
-    Motors.m_lift.set(-1);
+  //Commands 
+  public void cageRelease(){
+    Motors.m_release.setAngle(0);
   }
-  public void cageStop(){
-    Motors.m_lift.stopMotor();
-  }
-  public void cageDelift(){
-    Motors.m_lift.set(.5);
-  }
+  public void cageReset(){
+    Motors.m_release.setAngle(110);
+}
+
 }

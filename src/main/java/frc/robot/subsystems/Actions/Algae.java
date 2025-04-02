@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.Actions;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //Constants
 import frc.robot.Constants.Motors;
@@ -13,6 +14,7 @@ import frc.robot.commands.ManualFunctions.AlgaeEffector.algaeStop;
 public class Algae extends SubsystemBase {
   public Algae() {
     setDefaultCommand(new algaeStop(this));
+    SmartDashboard.putBoolean("IntakeFoward", false);
   }
 
   @Override
@@ -21,13 +23,16 @@ public class Algae extends SubsystemBase {
 
   //manuals
   public void algaeIntake(){
-    Motors.m_algae.set(.4);
+    Motors.m_algae.set(-.75);
+    SmartDashboard.putBoolean("IntakeFoward", true);
   }
   public void algaeOuttake(){
-    Motors.m_algae.set(-.4);
+    Motors.m_algae.set(.75);
+    SmartDashboard.putBoolean("IntakeFoward", false);
   }
   public void algaeStop(){
     Motors.m_algae.stopMotor();
+    SmartDashboard.putBoolean("IntakeFoward", false);
   }
 
 }

@@ -4,11 +4,9 @@
 
 package frc.robot.subsystems.Actions;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 //Constants
 import frc.robot.Constants.Motors;
-import frc.robot.Constants.Sensors;
 //Commands
 import frc.robot.commands.ManualFunctions.CoralEffector.coralStop;
 
@@ -23,7 +21,7 @@ public class Coral extends SubsystemBase {
 
   //manuals
   public void coralOuttake(){
-    Motors.m_coral.set(.5);
+    Motors.m_coral.set(-.5);
   }
   public void coralStop(){
     Motors.m_coral.stopMotor();

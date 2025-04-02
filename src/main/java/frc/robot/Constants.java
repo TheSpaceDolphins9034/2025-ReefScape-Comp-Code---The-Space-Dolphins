@@ -10,13 +10,17 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import frc.robot.subsystems.Actions.Algae;
 import frc.robot.subsystems.Actions.Cascade;
 import frc.robot.subsystems.Actions.Coral;
+import frc.robot.subsystems.Actions.LEDController;
 import frc.robot.subsystems.Actions.Lift;
+import frc.robot.subsystems.Actions.LiftServo;
 import frc.robot.subsystems.Actions.Wrist;
 import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Drive.LightHouse;
@@ -66,7 +70,8 @@ public final class Constants {
       public static final DigitalInput m_coralSwitch = new DigitalInput(coralSwitchID);
       public static final DigitalInput m_cascadeSwitch = new DigitalInput(cascadeSwitchID);
       public static final AnalogInput m_ultraSonic = new AnalogInput(ultraSonicID);
-
+      public static final AddressableLED m_led = new AddressableLED(1);
+      public static final AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(300);
     }
 
     //These are the initialization of Kepler's subsystems
@@ -78,19 +83,21 @@ public final class Constants {
       public static Wrist i_wrist = new Wrist();
       public static LightHouse i_lightHouse = new LightHouse();
       public static DriveSubsystem i_robotDrive = new DriveSubsystem();
+      public static LiftServo i_liftServo = new LiftServo();
+      public static LEDController i_ledContronller = new LEDController();
     }
 
     public static final class DriveConstants {
       // SPARK MAX CAN IDs
-      public static final int kFrontLeftDrivingCanId = 11;
-      public static final int kRearLeftDrivingCanId = 13;
-      public static final int kFrontRightDrivingCanId = 15;
-      public static final int kRearRightDrivingCanId = 17;
+      public static final int kFrontLeftDrivingCanId = 17; //11
+      public static final int kRearLeftDrivingCanId = 15; //13
+      public static final int kFrontRightDrivingCanId = 13; //15
+      public static final int kRearRightDrivingCanId = 11; //17
  
-      public static final int kFrontLeftTurningCanId = 10;
-      public static final int kRearLeftTurningCanId = 12;
-      public static final int kFrontRightTurningCanId = 14;
-      public static final int kRearRightTurningCanId = 16;
+      public static final int kFrontLeftTurningCanId = 16; //10
+      public static final int kRearLeftTurningCanId = 14; //12
+      public static final int kFrontRightTurningCanId = 12; //14
+      public static final int kRearRightTurningCanId = 10; //16
 
       // Driving Parameters - Note that these are not the maximum capable speeds of
       // the robot, rather the allowed maximum speeds

@@ -5,17 +5,14 @@
 package frc.robot.subsystems.Actions;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.jni.REVLibJNI;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,7 +30,7 @@ public class Wrist extends SubsystemBase {
   public Wrist() {
     //m_wBoreEncoder = Motors.m_wrist.getAlternateEncoder();
     wristPID = Motors.m_wrist.getClosedLoopController(); 
-    wristPIDValues = new PIDController(.35  , 0, 0);
+    wristPIDValues = new PIDController(.125  , 0, 0);
     m_wEncoder = Motors.m_wrist.getEncoder();
     wMotorConfig = new SparkMaxConfig();
 
@@ -46,57 +43,59 @@ public class Wrist extends SubsystemBase {
 
     wMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       //position PIDS
-      .p(5)
+      .p(.125)
       .d(0)
-      .outputRange(-1, 1)
-      .positionWrappingEnabled(true)
-      .positionWrappingInputRange(0, 1);
+      .outputRange(-.5, .5);
     Motors.m_wrist.configure(wMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-    
+  
     setDefaultCommand(new wristStop(this));
   }
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Wrist Postions", m_wEncoder.getPosition());
+    setDefaultCommand(new wristStop(this));
+
   }
 
   //manuals
     public void wristDown(){
-      Motors.m_wrist.set(-.1);
+      Motors.m_wrist.set(-.35);
+    }
+    public void wristStill(){
+      Motors.m_wrist.stopMotor();
     }
     public void wristStop(){
       Motors.m_wrist.stopMotor();
     }
     public void wristUp(){
-      Motors.m_wrist.set(.1);
+      Motors.m_wrist.set(.35);
     }
   //Set positions
     /* 
     /algae
     */
       public void wAlgaeBarge(){
-        Motors.m_wrist.set(MathUtil.clamp(wristPIDValues.calculate(m_wEncoder.getPosition(), 0), -1, 1));
+        wristPID.setReference(0, SparkBase.ControlType.kPosition);
       }
       public void wAlgaeFloorIntake(){
-        //wristPID.setReference(10, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot0);
-        Motors.m_wrist.set(MathUtil.clamp(wristPIDValues.calculate(m_wEncoder.getPosition(), -5), -1, 1));
+        wristPID.setReference(-22, SparkBase.ControlType.kPosition);
       }
       public void wAlgaeHolder(){
-        Motors.m_wrist.set(MathUtil.clamp(wristPIDValues.calculate(m_wEncoder.getPosition(), -24), -1, 1));
+        wristPID.setReference(-3, SparkBase.ControlType.kPosition);
       }
       public void wAlgaeLevelGrab(){
-  
+        wristPID.setReference(0, SparkBase.ControlType.kPosition);
       }
       public void wAlgaeProcessor(){
-  
+        wristPID.setReference(0, SparkBase.ControlType.kPosition);
       }
     /* 
     /Coral
     */
       public void wCoralFeed(){
-        
+        wristPID.setReference(0, SparkBase.ControlType.kPosition);
       }
       public void wLevels(){
-        Motors.m_wrist.set(MathUtil.clamp(wristPIDValues.calculate(m_wEncoder.getPosition(), 0), -1, 1));
+        wristPID.setReference(0, SparkBase.ControlType.kPosition);
       }
 }

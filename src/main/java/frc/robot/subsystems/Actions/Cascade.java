@@ -5,7 +5,7 @@
 package frc.robot.subsystems.Actions;
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -13,7 +13,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -30,7 +29,7 @@ public class Cascade extends SubsystemBase {
   public PIDController cascadePIDValues;
   public Cascade() {
    cascadePID = Motors.m_cascade.getClosedLoopController(); 
-    cascadePIDValues = new PIDController(.35, 0, 0);
+    cascadePIDValues = new PIDController(.1, 0, 0);
     m_cEncoder = Motors.m_cascade.getEncoder();
     cMotorConfig = new SparkMaxConfig();
 
@@ -43,28 +42,31 @@ public class Cascade extends SubsystemBase {
 
     cMotorConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder)
       //position PIDS
-      .p(5)
+      .p(.1)
       .d(0)
-      .outputRange(-1, 1)
-      .positionWrappingEnabled(true)
-      .positionWrappingInputRange(0, 1);
+      .outputRange(-1, 1);
     Motors.m_cascade.configure(cMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
+    setDefaultCommand(new cascadeStop(this));
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Cascade Encoder", m_cEncoder.getPosition());
+    SmartDashboard.putNumber("Cascade Encoder", -m_cEncoder.getPosition());
   }
 
   //manuals
   public void cascadeUp(){
-    Motors.m_cascade.set(1);
+    Motors.m_cascade.set(-1);
   }
   public void cascadeStop(){
     Motors.m_cascade.stopMotor();
   }
   public void cascadeDown(){
-    Motors.m_cascade.set(-.5);
+      Motors.m_cascade.set(1);
+  }
+  public void cascadeBelow0(){
+    cascadePID.setReference(0, SparkBase.ControlType.kPosition);
   }
 
   //Set positions
@@ -72,42 +74,40 @@ public class Cascade extends SubsystemBase {
     /algae
     */
       public void cAlgaeBarge(){
+        cascadePID.setReference(0, SparkBase.ControlType.kPosition);
       }
       public void cAlgaeFloorIntake(){
-    
+        cascadePID.setReference(0, SparkBase.ControlType.kPosition);
       }
       public void cAlgaeHolder(){
-    
+        cascadePID.setReference(0, SparkBase.ControlType.kPosition);
       }
       public void cAlgaeL1(){
-        /*
-        if(m_cascadeEncoder.get()>300){
-          Motors.m_coral.set(-.25);
-        }
-          */
+        cascadePID.setReference(0, SparkBase.ControlType.kPosition);
       }
       public void cAlgaeL2(){
-    
+        cascadePID.setReference(0, SparkBase.ControlType.kPosition);
       }
       public void cAlgaeProcessor(){
-    
+        cascadePID.setReference(0, SparkBase.ControlType.kPosition);
       }
     /* 
     /Coral
     */
       public void cCoralFeed(){
-    
+        cascadePID.setReference(0, SparkBase.ControlType.kPosition);
       }
       public void cCoralL1(){
-    
+        cascadePID.setReference(-155, SparkBase.ControlType.kPosition);
       }
       public void cCoralL2(){
-    
+        cascadePID.setReference(-190, SparkBase.ControlType.kPosition);
       }
       public void cCoralL3(){
-    
+        cascadePID.setReference(-280, SparkBase.ControlType.kPosition);
       }
       public void cCoralL4(){
-        Motors.m_wrist.set(MathUtil.clamp(cascadePIDValues.calculate(m_cEncoder.getPosition(), -24), -1, 1));
+        cascadePID.setReference(-432, SparkBase.ControlType.kPosition);
+        //+11
       }
 }

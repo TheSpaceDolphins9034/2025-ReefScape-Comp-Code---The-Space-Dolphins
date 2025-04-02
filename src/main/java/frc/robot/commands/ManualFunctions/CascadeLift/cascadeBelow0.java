@@ -1,28 +1,29 @@
+// Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.ManualFunctions.CageLift;
+package frc.robot.commands.ManualFunctions.CascadeLift;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.InitSubs;
-import frc.robot.subsystems.Actions.LiftServo;
+import frc.robot.subsystems.Actions.Cascade;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class cageRelease extends Command {
-  public cageRelease(LiftServo param_liftServo) {
-    InitSubs.i_liftServo = param_liftServo;
-    addRequirements(InitSubs.i_lift); 
+public class cascadeBelow0 extends Command {
+  public cascadeBelow0(Cascade param_cascade) {
+    InitSubs.i_cascade = param_cascade;
+    addRequirements(InitSubs.i_cascade); 
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    InitSubs.i_liftServo.cageRelease();
   }
-
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    InitSubs.i_cascade.cascadeBelow0();
+  }
 
   // Called once the command ends or is interrupted.
   @Override

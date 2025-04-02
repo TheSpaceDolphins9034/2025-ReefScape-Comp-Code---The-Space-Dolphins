@@ -5,19 +5,19 @@ package frc.robot.commands.ManualFunctions.CageLift;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.InitSubs;
-import frc.robot.subsystems.Actions.Lift;
+import frc.robot.subsystems.Actions.LiftServo;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class cageReset extends Command {
-  public cageReset(Lift param_lift) {
-    InitSubs.i_lift = param_lift;
-    addRequirements(InitSubs.i_lift); 
+  public cageReset(LiftServo param_liftServo) {
+    InitSubs.i_liftServo = param_liftServo;
+    addRequirements(InitSubs.i_liftServo); 
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    InitSubs.i_lift.cageReset();
+    InitSubs.i_liftServo.cageReset();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
