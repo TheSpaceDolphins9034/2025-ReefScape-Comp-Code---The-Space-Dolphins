@@ -46,6 +46,7 @@ public final class Constants {
   //These are the initialization of Kepler's ID's
     //motors
       public static final int CascadeID = 9;
+      public static final int CascadeID2 = 4;
       public static final int CoralID = 8;
       public static final int AlgaeID = 7;
       public static final int LiftID = 6;
@@ -59,6 +60,7 @@ public final class Constants {
     //These are the initialization of Kepler's motors
     public static final class Motors{
       public static final SparkMax m_cascade = new SparkMax(Constants.CascadeID, MotorType.kBrushless);
+      public static final SparkMax m_cascade2 = new SparkMax(Constants.CascadeID2, MotorType.kBrushless);
       public static final SparkMax m_coral = new SparkMax(Constants.CoralID, MotorType.kBrushless);
       public static final SparkMax m_algae = new SparkMax(Constants.AlgaeID, MotorType.kBrushless);
       public static final SparkMax m_lift = new SparkMax(Constants.LiftID, MotorType.kBrushless);
@@ -85,6 +87,34 @@ public final class Constants {
       public static DriveSubsystem i_robotDrive = new DriveSubsystem();
       public static LiftServo i_liftServo = new LiftServo();
       public static LEDController i_ledContronller = new LEDController();
+    }
+
+    public static final class Positions {
+      /*
+       *        Cascade Positions
+       *        Min: 0  Max: -185
+      */
+      public static final double cZero = 0;
+      public static final double cCoralL1 = -45;
+      public static final double cCoralL2 = -75;
+      public static final double cCoralL3 = -105;
+      public static final double cCoralL4 = -155.5;
+      public static final double cAlgaeL1 = 17;
+      public static final double cAlgaeL2 = 17;
+      public static final double cBarge = 17;
+
+      /*
+       *         Wrist Postions
+       *        Min: 0  Max: -11
+      */
+      public static final double wZero = 0;
+      public static final double wLevels = 6;
+      public static final double wAlgaeLevelGrab = 17;
+      public static final double wAlgaeBarge = 7;
+      public static final double wAlgaeFloorIntake = 11;
+      public static final double wAlgaeProcessor = 7.3;
+      public static final double wAlgaeHolder = 17;
+      public static final double wAlgaeLolipop = 17;
     }
 
     public static final class DriveConstants {

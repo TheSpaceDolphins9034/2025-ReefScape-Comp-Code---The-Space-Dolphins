@@ -26,9 +26,4 @@ public class Coral extends SubsystemBase {
   public void coralStop(){
     Motors.m_coral.stopMotor();
   }
-
-  //set positions
-  public void coralFeed(){
-    
-  }
 }

@@ -20,6 +20,7 @@ public class cCoralL2 extends Command {
   public void initialize() {
     InitSubs.i_cascade.cCoralL2();
   }
+  
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

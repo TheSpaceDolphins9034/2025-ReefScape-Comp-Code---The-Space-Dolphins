@@ -24,7 +24,7 @@ public class LiftServo extends SubsystemBase {
     Motors.m_release.setAngle(0);
   }
   public void cageReset(){
-    Motors.m_release.setAngle(110);
+    Motors.m_release.setAngle(125);
 }
 
 }

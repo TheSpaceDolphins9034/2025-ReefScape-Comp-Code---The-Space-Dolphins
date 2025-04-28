@@ -18,12 +18,13 @@ public class cCoralL1 extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    InitSubs.i_cascade.cCoralL1();
+    InitSubs.i_cascade.cCoralL2();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+  }
 
   // Called once the command ends or is interrupted.
   @Override

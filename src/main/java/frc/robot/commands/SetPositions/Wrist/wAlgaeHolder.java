@@ -18,12 +18,12 @@ public class wAlgaeHolder extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    InitSubs.i_wrist.wAlgaeHolder();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    InitSubs.i_wrist.wAlgaeHolder();
   }
 
   // Called once the command ends or is interrupted.

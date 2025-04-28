@@ -7,10 +7,11 @@ package frc.robot.subsystems.Drive;
 import java.util.Optional;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.AutoConstants;
@@ -21,10 +22,28 @@ import frc.utils.LimeLightHelpers;
 public class LightHouse extends SubsystemBase {
   /** Creates a new LimeLight(LightHouse). */
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-  int[] allianceReefArray;
-  int[] allianceFeederArray;
+  public int[] allianceReefArray;
+  public int[] allianceFeederArray;
   Optional<Alliance> alliance = DriverStation.getAlliance();
+
+  private final PIDController distancePID;
+  private final PIDController anglePID;
+
+  private double tx;
+  private double ta;
+  private double ty;
+
+  private double angleToTarget = 0;
+  private double distanceError = 0;
+  private double speed = 0;
+  private double xSpeed = 0;
+  private double ySpeed = 0;
+  private double angleError = 0;
+  private double rotationSpeed = 0;
+
   public LightHouse() {
+    distancePID = new PIDController(1.0, 0, 0);
+    anglePID = new PIDController(3.0, 0, 0);
     if(alliance.get() == Alliance.Red){
       allianceReefArray = new int[] {6,7,8,9,10,11};
       allianceFeederArray = new int[] {1,2};
@@ -36,7 +55,17 @@ public class LightHouse extends SubsystemBase {
       allianceFeederArray = new int[] {1,2,12,13};
      }
   }
-
+/* 
+  public boolean isTrackingValidTag(){
+    boolean hasTarget = LimeLightHelpers.getTV("LightHouse");
+    //no tag in sight
+    if (!hasTarget){
+      return false;
+    }
+    
+    double tagIdDouble = LimeLightHelpers.getFiducialID("LightHouse");
+  }
+*/
   private double zAxis(double rawZ){
     if(rawZ >= -.2 && rawZ <= .2){
       rawZ = 0;
@@ -56,13 +85,13 @@ public class LightHouse extends SubsystemBase {
     double kP = .008;
     // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of 
     // your LightHouse 3 feed, tx should return roughly 31 degrees.
-    double targetingAngularVelocity = (LimeLightHelpers.getTX("LightHouse") * kP);
+    double targetingAngularVelocity = LimeLightHelpers.getTX("limelight-kepler") * kP;
 
     // convert to radians per second for our drive method
-    targetingAngularVelocity *= AutoConstants.kMaxAngularSpeedRadiansPerSecond;
+    targetingAngularVelocity = AutoConstants.kMaxAngularSpeedRadiansPerSecond*targetingAngularVelocity;
 
     //invert since tx is positive when the target is to the right of the crosshair
-    targetingAngularVelocity *= -1.0;
+    targetingAngularVelocity = -targetingAngularVelocity;
 
     return targetingAngularVelocity;
   }
@@ -73,7 +102,7 @@ public class LightHouse extends SubsystemBase {
   double lightHouse_range_proportional()
   {    
     double kP = .1;
-    double targetingForwardSpeed = LimeLightHelpers.getTY("LightHouse") * kP;
+    double targetingForwardSpeed = LimeLightHelpers.getTY("limelight-kepler") * kP;
     targetingForwardSpeed *= AutoConstants.kMaxSpeedMetersPerSecond;
     targetingForwardSpeed *= -1.0;
     return targetingForwardSpeed;
@@ -81,54 +110,72 @@ public class LightHouse extends SubsystemBase {
 
   double lightHouse_domain_proportional()
   {    
-    double kP = .1;
-    double targetingSidewaysSpeed = LimeLightHelpers.getTA("LightHouse") * kP;
+    double kP = .05;
+    double targetingSidewaysSpeed = LimeLightHelpers.getTA("limelight-kepler") * kP;
     targetingSidewaysSpeed *= AutoConstants.kMaxSpeedMetersPerSecond;
-    targetingSidewaysSpeed *= -1.0;
+    targetingSidewaysSpeed *= -.25;
     return targetingSidewaysSpeed;
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    tx = LimeLightHelpers.getTX("limelight-kepler");
+    ty = LimeLightHelpers.getTY("limelight-kepler");
+    ta = LimeLightHelpers.getTA("limelight-kepler");
   }
 
   
   //It completes the function all the way through
   public void autoTrack(boolean fieldRelative) {
-     var rot_lightHouse = lightHouse_aim_proportional();
+     final var rot_lightHouse = lightHouse_aim_proportional();
      double rot = 0.0;
-      if(LimeLightHelpers.getTV("LightHouse")==true /*&& LimeLightHelpers.getFiducialID("lightHouse") == allianceReefArray.*/){
+      if(LimeLightHelpers.getTV("limelight-kepler")==true /*&& LimeLightHelpers.getFiducialID("lightHouse") == allianceReefArray.*/){
          rot = rot_lightHouse;
-         if(rot_lightHouse >=-.5 || rot_lightHouse <=.5){
-            SmartDashboard.putBoolean("AprilTagTrack", true);
-         }
       }else{
          rot = -MathUtil.applyDeadband(zAxis(m_driverController.getRawAxis(2)), OIConstants.kDriveDeadband);
-         SmartDashboard.putBoolean("AprilTagTrack", false);
       }
         //final var forward_lightHouse = lightHouse_range_proportional();
         //xSpeed = forward_lightHouse
         //while using LightHouse, turn off field-relative driving.
     
-       // new RunCommand(() -> 
-       
        InitSubs.i_robotDrive.drive(
               -MathUtil.applyDeadband(RobotContainer.m_driverController.getLeftY(), OIConstants.kDriveDeadband),
               -MathUtil.applyDeadband(RobotContainer.m_driverController.getLeftX(), OIConstants.kDriveDeadband),
               rot,
               fieldRelative);
-              //,
-          //RobotContainer.m_robotDrive);
 }
 public void autoAlign(boolean fieldRelative) {
-  var rot_lightHouse = lightHouse_aim_proportional();
-  var forward_lightHouse = lightHouse_range_proportional();
-  var sideways_lightHouse = lightHouse_domain_proportional();
-  double rot = 0.0;
-  double xSpeed = 0.0;
-  double ySpeed = 0.0;
-   if(LimeLightHelpers.getTV("lightHouse") == true /*&& LimeLightHelpers.getFiducialID("lightHouse") : allianceReefArray*/){
+  
+  //gets current pose of the robot
+  Pose2d currentPose = InitSubs.i_robotDrive.getPose();
+  
+  //detects if theres even a april tag
+  if(ta == 0.0){
+    InitSubs.i_robotDrive.drive(
+        -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+        -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+        -MathUtil.applyDeadband(zAxis(m_driverController.getRawAxis(2)), OIConstants.kDriveDeadband),
+        true);
+    return;
+  }
+  
+
+  //error between current and target pose
+  angleToTarget = Math.atan2(ty, tx);
+  distanceError = Math.sqrt(tx*tx+ty*ty);
+  //PID for translation
+  speed = distancePID.calculate(distanceError, 0);
+  //use sin/cos to convert the angle to x and y speeds
+  xSpeed = speed * Math.cos(angleToTarget);
+  ySpeed = speed * Math.sin(angleToTarget);
+  //PID Control for rotation
+  angleError = angleToTarget - currentPose.getRotation().getRadians();
+  rotationSpeed = anglePID.calculate(angleError, 0);
+  //drive the robot to align with the april tag
+  InitSubs.i_robotDrive.drive(xSpeed, ySpeed, rotationSpeed, fieldRelative);
+
+/* 
+   if(LimeLightHelpers.getTV("lightHouse") == true /*&& LimeLightHelpers.getFiducialID("lightHouse") : allianceReefArray){
       rot = rot_lightHouse;
       xSpeed = forward_lightHouse;
       ySpeed = sideways_lightHouse;
@@ -141,5 +188,6 @@ public void autoAlign(boolean fieldRelative) {
    }
      //while using lighHouse, turn off field-relative driving.
     InitSubs.i_robotDrive.drive(xSpeed, ySpeed, rot, fieldRelative);
+    */
 }
 }

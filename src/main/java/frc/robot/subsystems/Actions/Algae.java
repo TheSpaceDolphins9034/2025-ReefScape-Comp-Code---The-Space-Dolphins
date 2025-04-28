@@ -18,7 +18,7 @@ public class Algae extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
+  public void periodic(){
   }
 
   //manuals

@@ -7,8 +7,11 @@ package frc.robot.commands.LimeLightFunctions;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.InitSubs;
 import frc.robot.subsystems.Drive.LightHouse;
+import frc.utils.LimeLightHelpers;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+/* You should consider using the more terse Co
+
+mmand factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class autoTrack extends Command {
   public autoTrack(LightHouse param_limeLight) {
     InitSubs.i_lightHouse = param_limeLight;
@@ -22,7 +25,9 @@ public class autoTrack extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    InitSubs.i_lightHouse.autoTrack(true);
+    if(LimeLightHelpers.getTV("limelight-kepler")){
+      InitSubs.i_lightHouse.autoTrack(true);
+    }
   }
 
   // Called once the command ends or is interrupted.

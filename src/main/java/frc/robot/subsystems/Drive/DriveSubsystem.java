@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 //import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+
 import com.pathplanner.lib.config.RobotConfig;
 import frc.robot.Constants;
 
@@ -27,11 +29,11 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix.sensors.PigeonIMU;
 //import com.ctre.phoenix6.hardware.core.CorePigeon2;
 
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.InitSubs;
 import swervelib.SwerveDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -67,8 +69,8 @@ public class DriveSubsystem extends SubsystemBase {
   // The gyro sensor
   //private Pigeon2 m_seagullGyro = new Pigeon2(2); corraly rant
   private PigeonIMU m_seagullIMU = new PigeonIMU(2);
-  public final PIDConstants pidTranslation = new PIDConstants(.075, 0.0, 0.01);
-  public final PIDConstants pidRotation = new PIDConstants(.075, 0.0, 0.0);
+  public final PIDConstants pidTranslation = new PIDConstants(.0000008, 0.0, 1);
+  public final PIDConstants pidRotation = new PIDConstants(.00008, 0.0, 1);
   //private SwerveDriveOdometry swerveOdometry = new SwerveDriveOdometry(DriveConstants.kDriveKinematics, getYaw(), );
 
   // Odometry class for tracking robot pose
@@ -171,6 +173,29 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(swerveModuleStates[3]);
   }
 
+  public void drive(ChassisSpeeds chassisSpeeds){
+    drive(chassisSpeeds, true);
+  }
+  /* 
+   *    AUTONOMOUS COMMANDS
+   * 
+   *   .26 SPEED = 4 FEET/S
+   * 
+   *    FROM DRIVERSTATION VIEW
+   *    DriveXFeet(Feet, (+ = Foward)(- = Back));
+   *    DriveYFeet(Feet, (+ = Right)(- = Left));
+   * 
+   */
+  public void DriveXFeet(double xFeet, double direction){
+    InitSubs.i_robotDrive.drive(.26*direction, 0, 0, false);
+    Timer.delay(.25*xFeet);
+    InitSubs.i_robotDrive.drive(0, 0, 0,false);
+  }
+  public void DriveYFeet(double yFeet, double direction){
+    InitSubs.i_robotDrive.drive(0, -.26*direction, 0,false);
+    Timer.delay(.25*yFeet);
+    InitSubs.i_robotDrive.drive(0, 0, 0, false);
+  }
   /**
    * Sets the wheels into an X formation to prevent movement.
    */
@@ -206,7 +231,7 @@ public class DriveSubsystem extends SubsystemBase {
   /** Zeroes the heading of the robot. */
   public void zeroHeading() {
    // m_seagullGyro.reset(); corrales rant
-    m_seagullIMU.setYaw(0);
+    m_seagullIMU.setYaw(180);
   }
 
   /**
@@ -287,7 +312,6 @@ private void drive(ChassisSpeeds speeds, boolean fieldRelative) {
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     setModuleStates(swerveModuleStates);
 }
-  
   /**
    * Returns the turn rate of the robot.
    *
@@ -341,7 +365,7 @@ private void drive(ChassisSpeeds speeds, boolean fieldRelative) {
     }
    
     //Uncomment this if you want to monitor the configuration confirmation.
-    //System.out.println(AutoBuilder.isConfigured());
+    System.out.println(AutoBuilder.isConfigured());
     
   
   }

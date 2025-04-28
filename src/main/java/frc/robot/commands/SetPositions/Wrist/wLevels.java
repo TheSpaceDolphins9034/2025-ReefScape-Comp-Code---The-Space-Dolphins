@@ -18,12 +18,12 @@ public class wLevels extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    InitSubs.i_wrist.wLevels();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    InitSubs.i_wrist.wLevels();
   }
 
   // Called once the command ends or is interrupted.
@@ -33,6 +33,6 @@ public class wLevels extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return InitSubs.i_wrist.wristPIDValues.atSetpoint();
   }
 }
