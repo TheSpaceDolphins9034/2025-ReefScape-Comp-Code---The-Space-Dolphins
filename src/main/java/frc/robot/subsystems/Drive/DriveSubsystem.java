@@ -30,7 +30,8 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.ctre.phoenix.sensors.PigeonIMU;
-//import com.ctre.phoenix6.hardware.core.CorePigeon2;
+import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.hardware.core.CorePigeon2;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.InitSubs;
@@ -67,10 +68,11 @@ public class DriveSubsystem extends SubsystemBase {
       DriveConstants.kBackRightChassisAngularOffset);
 
   // The gyro sensor
-  //private Pigeon2 m_seagullGyro = new Pigeon2(2); corraly rant
+  private Pigeon2 m_seagullGyro = new Pigeon2(2); 
   private PigeonIMU m_seagullIMU = new PigeonIMU(2);
-  public final PIDConstants pidTranslation = new PIDConstants(.0000008, 0.0, 1);
-  public final PIDConstants pidRotation = new PIDConstants(.00008, 0.0, 1);
+  public final PIDConstants pidTranslation = new PIDConstants(2.5, 0.0, 0);
+  public final PIDConstants pidRotation = new PIDConstants(.075, 0.0, 0);
+  
   //private SwerveDriveOdometry swerveOdometry = new SwerveDriveOdometry(DriveConstants.kDriveKinematics, getYaw(), );
 
   // Odometry class for tracking robot pose
@@ -134,7 +136,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
-    //zeroHeading();
+    zeroHeading();
     m_odometry.resetPosition(
         Rotation2d.fromDegrees(m_seagullIMU.getYaw()),
         new SwerveModulePosition[] {
@@ -318,9 +320,7 @@ private void drive(ChassisSpeeds speeds, boolean fieldRelative) {
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
-    double[] xyz = new double[0];
-    m_seagullIMU.getRawGyro(xyz);
-    return xyz[0] * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    return m_seagullGyro.getAngularVelocityZWorld().getValueAsDouble() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 
 
@@ -340,14 +340,13 @@ private void drive(ChassisSpeeds speeds, boolean fieldRelative) {
             (speeds, feedforwards) -> driveRobotRelative(speeds),
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
                     pidTranslation, // Translation PID constants
-                    pidRotation // Rotation PID constants    (i usually match these to teleop driving constants.)
+                    pidRotation // Rotation PID constants 
             ),
           config,
           () -> {
             // Boolean supplier that controls when the path will be mirrored for the red alliance
             // This will flip the path being followed to the red side of the field.
             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
             var alliance = DriverStation.getAlliance();
             if (alliance.isPresent())
             {
@@ -358,16 +357,12 @@ private void drive(ChassisSpeeds speeds, boolean fieldRelative) {
           this
           // Reference to this subsystem to set requirements
                            );
-
     } catch (Exception e)
     {
       e.printStackTrace();
     }
-   
     //Uncomment this if you want to monitor the configuration confirmation.
     System.out.println(AutoBuilder.isConfigured());
-    
-  
   }
 /* */
   public Command getAutonomousCommand(String pathName) {
@@ -376,7 +371,6 @@ private void drive(ChassisSpeeds speeds, boolean fieldRelative) {
  
   public Command driveToPose(Pose2d pose)
   {
-
 	PathConstraints constraints = new PathConstraints(
         2.8, 2.8,  //these two are different instances of max speeds, you can make them the same. 
         2 * Math.PI, 2 * Math.PI);	//same for these two angular speeds
@@ -388,5 +382,4 @@ private void drive(ChassisSpeeds speeds, boolean fieldRelative) {
         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
       );
   }
-
 }

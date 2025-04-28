@@ -5,20 +5,20 @@
 package frc.robot.commands.ManualFunctions.CascadeLift;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.InitSubs;
-import frc.robot.subsystems.Actions.Cascade;
+import frc.robot.subsystems.Actions.Cascade.Cascade;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class cascadeStop extends Command {
+  Cascade i_cascade;
   public cascadeStop(Cascade param_cascade) {
-    InitSubs.i_cascade = param_cascade;
-    addRequirements(InitSubs.i_cascade); 
+    i_cascade = param_cascade;
+    addRequirements(i_cascade); 
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    InitSubs.i_cascade.cascadeStop();
+    i_cascade.cascadeStop();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

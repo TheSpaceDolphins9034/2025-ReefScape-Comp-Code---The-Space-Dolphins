@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.Actions;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -22,7 +23,7 @@ import frc.robot.Constants.Motors;
 //Commands
 
 public class Wrist extends SubsystemBase {
-  public RelativeEncoder m_wEncoder;
+  public AbsoluteEncoder m_wEncoder;
   public SparkClosedLoopController wristPID;
   public SparkMaxConfig wMotorConfig;
   public PIDController wristPIDValues;
@@ -31,10 +32,19 @@ public class Wrist extends SubsystemBase {
     //m_wBoreEncoder = Motors.m_wrist.getAlternateEncoder();
     wristPID = Motors.m_wrist.getClosedLoopController(); 
     wristPIDValues = new PIDController(.1  , 0, 3);
-    m_wEncoder = Motors.m_wrist.getEncoder();
+    m_wEncoder = Motors.m_wrist.getAbsoluteEncoder();
     wMotorConfig = new SparkMaxConfig();
 
     wMotorConfig
+        .idleMode(IdleMode.kBrake);
+    wMotorConfig.absoluteEncoder
+        .positionConversionFactor(2 * Math.PI) // radians
+        .velocityConversionFactor((2 * Math.PI)/60);
+    wMotorConfig.closedLoop
+        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+        .pid(.1, 0, 3)
+        .outputRange(-75, 75);
+    /*wMotorConfig
       .idleMode(IdleMode.kBrake);
 
     wMotorConfig.encoder
@@ -45,7 +55,7 @@ public class Wrist extends SubsystemBase {
       //position PIDS
       .p(.25)
       .d(3)
-      .outputRange(-.75, .75);
+      .outputRange(-.75, .75);*/
     Motors.m_wrist.configure(wMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
   
   }

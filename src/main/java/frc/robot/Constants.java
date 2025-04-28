@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -16,12 +17,12 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import frc.robot.subsystems.Actions.Algae;
-import frc.robot.subsystems.Actions.Cascade;
 import frc.robot.subsystems.Actions.Coral;
 import frc.robot.subsystems.Actions.LEDController;
 import frc.robot.subsystems.Actions.Lift;
 import frc.robot.subsystems.Actions.LiftServo;
 import frc.robot.subsystems.Actions.Wrist;
+import frc.robot.subsystems.Actions.Cascade.Cascade;
 import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Drive.LightHouse;
 
@@ -54,13 +55,12 @@ public final class Constants {
       public static final int ServoReleaseID = 0;
     //sensors
       public static final int coralSwitchID = 2;
-      public static final int cascadeSwitchID = 3;
       public static final int ultraSonicID = 4;
 
     //These are the initialization of Kepler's motors
     public static final class Motors{
-      public static final SparkMax m_cascade = new SparkMax(Constants.CascadeID, MotorType.kBrushless);
-      public static final SparkMax m_cascade2 = new SparkMax(Constants.CascadeID2, MotorType.kBrushless);
+      //public static final SparkMax m_cascade = new SparkMax(Constants.CascadeID, MotorType.kBrushless);
+      //public static final SparkMax m_cascade2 = new SparkMax(Constants.CascadeID2, MotorType.kBrushless);
       public static final SparkMax m_coral = new SparkMax(Constants.CoralID, MotorType.kBrushless);
       public static final SparkMax m_algae = new SparkMax(Constants.AlgaeID, MotorType.kBrushless);
       public static final SparkMax m_lift = new SparkMax(Constants.LiftID, MotorType.kBrushless);
@@ -70,7 +70,6 @@ public final class Constants {
     //These are the initialization of Kepler's sensors
     public static final class Sensors{
       public static final DigitalInput m_coralSwitch = new DigitalInput(coralSwitchID);
-      public static final DigitalInput m_cascadeSwitch = new DigitalInput(cascadeSwitchID);
       public static final AnalogInput m_ultraSonic = new AnalogInput(ultraSonicID);
       public static final AddressableLED m_led = new AddressableLED(1);
       public static final AddressableLEDBuffer m_ledBuffer = new AddressableLEDBuffer(300);
@@ -87,6 +86,13 @@ public final class Constants {
       public static DriveSubsystem i_robotDrive = new DriveSubsystem();
       public static LiftServo i_liftServo = new LiftServo();
       public static LEDController i_ledContronller = new LEDController();
+    }
+
+    public static class CascadeIO{
+      public static final boolean IS_INVERTED = false;
+      public static final double ELEVATOR_PEAK_CURRENT_LIMIT = 60.0;
+      public static final double ELEVATOR_PEAK_MAXHEIGHT_LIMIT = 185.0;
+      public static final double ELEVATOR_PEAK_MINHEIGHT_LIMIT = -1;
     }
 
     public static final class Positions {

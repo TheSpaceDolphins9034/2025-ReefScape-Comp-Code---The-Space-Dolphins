@@ -1,8 +1,9 @@
+/* 
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.Actions;
+package frc.robot.subsystems.Actions.Cascade;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
@@ -22,7 +23,7 @@ import frc.robot.Constants.Motors;
 //Commands
 import frc.robot.commands.ManualFunctions.CascadeLift.cascadeStop;
 
-public class Cascade extends SubsystemBase {
+public class NeoCascade extends SubsystemBase {
   public RelativeEncoder m_cEncoder;
   public RelativeEncoder m_c2Encoder;
   public SparkClosedLoopController cascadePID;
@@ -30,16 +31,18 @@ public class Cascade extends SubsystemBase {
   public SparkMaxConfig cMotorConfig;
   public SparkMaxConfig c2MotorConfig;
   public PIDController cascadePIDValues;
+
   public double speed;
-  public Cascade() {
+  public NeoCascade() {
     cascadePID = Motors.m_cascade.getClosedLoopController();
     cascadePID2 = Motors.m_cascade2.getClosedLoopController();
     m_cEncoder = Motors.m_cascade.getEncoder();
     m_c2Encoder = Motors.m_cascade2.getEncoder();
     cMotorConfig = new SparkMaxConfig();
     c2MotorConfig = new SparkMaxConfig();
-    cascadePIDValues = new PIDController(.1  , 0, .1);
 
+    cascadePIDValues = new PIDController(.1  , 0, .1);
+ 
     //Cascade Motor 1
     cMotorConfig
       .idleMode(IdleMode.kBrake);
@@ -71,7 +74,6 @@ public class Cascade extends SubsystemBase {
       .outputRange(-1, .75);
 
     Motors.m_cascade2.configure(c2MotorConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
-    
     setDefaultCommand(new cascadeStop(this));
   }
 
@@ -106,7 +108,7 @@ public class Cascade extends SubsystemBase {
   //Set positions
     /* 
     /algae
-    */
+    //
       public void cAlgaeBarge(){
         cascadePID.setReference(0, SparkBase.ControlType.kPosition);
       }
@@ -127,7 +129,7 @@ public class Cascade extends SubsystemBase {
       }
     /* 
     /Coral
-    */
+    //
       public void cCoralFeed(){
         cascadePID.setReference(0, SparkBase.ControlType.kPosition);
       }
@@ -145,3 +147,4 @@ public class Cascade extends SubsystemBase {
         //+11 after sequence
       }
 }
+*/
