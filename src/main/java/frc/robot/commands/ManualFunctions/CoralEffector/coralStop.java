@@ -6,7 +6,7 @@ package frc.robot.commands.ManualFunctions.CoralEffector;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.InitSubs;
-import frc.robot.subsystems.Actions.Coral;
+import frc.robot.subsystems.Actions.GamePieceManipulators.Coral;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class coralStop extends Command {

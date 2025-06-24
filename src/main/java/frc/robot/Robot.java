@@ -14,16 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.InitSubs;
-import frc.robot.Constants.Positions;
-import frc.robot.commands.ManualFunctions.ArmWrist.wristStop;
-import frc.robot.commands.SetPositions.wPosition;
-import frc.robot.subsystems.Actions.Wrist;
-import frc.robot.subsystems.Drive.DriveSubsystem;
-import frc.robot.subsystems.Drive.LightHouse;
-import frc.robot.commands.SetPositions.wPosition;
+import frc.robot.subsystems.Vision.LightHouse;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -39,26 +31,47 @@ public class Robot extends TimedRobot {
   LightHouse m_limelight = new LightHouse();
 
   //AUTOS
-  private static final String AFoward = "Foward";
-  private static final String AFowardRotate = "Foward + Rotate";
-  private static final String ASwivle = "Swivle";
-  private static final String ASwivleRotate = "Swivle + Rotate";
-  private static final String ARotate = "Rotate";
+  //default
   private static final String ANull = null;
+  //real
+  private static final String AAlgaeLineUpLeft = "AlgaeLineUpLeft";
+  private static final String ALAlgaeLineUpMid = "LAlgaeLineUpMid";
+  private static final String ARAlgaeLineUpMid = "RAlgaeLineUpMid";
+  private static final String AAlgaeLineUpRight = "AlgaeLineUpRight";
+  private static final String AL4Left = "L4Left";
+  private static final String ALeave = "Leave";
+  private static final String AL4Leave = "L4Leave";
+  //tests
+  private static final String ARotate = "Rotate";
+  private static final String AFowardRotate = "Foward + Rotate";
+  private static final String AFoward = "Foward";
+  private static final String ASwivleRotate = "Swivle + Rotate";
+  private static final String ASwivle = "Swivle";
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
-    // autonomous chooser on the dashboard.
+    //default
     m_chooser.setDefaultOption("Nothing", ANull);
-    m_chooser.addOption(AFowardRotate, AFowardRotate);
-    m_chooser.addOption(ASwivle, ASwivle);
-    m_chooser.addOption(ASwivleRotate, ASwivleRotate);
+    //Real Autos
+    m_chooser.addOption(ARAlgaeLineUpMid, ARAlgaeLineUpMid);
+    m_chooser.addOption(ALAlgaeLineUpMid, ALAlgaeLineUpMid);
+    m_chooser.addOption(AAlgaeLineUpRight, AAlgaeLineUpRight);
+    m_chooser.addOption(AAlgaeLineUpLeft, AAlgaeLineUpLeft);
+
+    m_chooser.addOption(AL4Left, AL4Left);
+    m_chooser.addOption(ALeave, ALeave);
+    m_chooser.addOption(AL4Leave, AL4Leave);
+    //Test Autos
     m_chooser.addOption(ARotate, ARotate);
     m_chooser.addOption(AFoward, AFoward);
+    m_chooser.addOption(ASwivle, ASwivle);
+    m_chooser.addOption(ASwivleRotate, ASwivleRotate);
+    m_chooser.addOption(AFowardRotate, AFowardRotate);
+  
     SmartDashboard.putNumber("Match Time", 0);
     SmartDashboard.putData("Auto choices", m_chooser);
     SmartDashboard.putBoolean("DriverController", false);
@@ -124,7 +137,6 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    InitSubs.i_wrist.setDefaultCommand(new wristStop(InitSubs.i_wrist));
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

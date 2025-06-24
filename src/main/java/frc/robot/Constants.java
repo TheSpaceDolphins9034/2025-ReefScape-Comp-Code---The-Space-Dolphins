@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.hardware.TalonFX;
+
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -16,15 +16,14 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
-import frc.robot.subsystems.Actions.Algae;
-import frc.robot.subsystems.Actions.Coral;
 import frc.robot.subsystems.Actions.LEDController;
-import frc.robot.subsystems.Actions.Lift;
-import frc.robot.subsystems.Actions.LiftServo;
-import frc.robot.subsystems.Actions.Wrist;
+import frc.robot.subsystems.Actions.CageLift.Lift;
 import frc.robot.subsystems.Actions.Cascade.Cascade;
+import frc.robot.subsystems.Actions.GamePieceManipulators.Algae;
+import frc.robot.subsystems.Actions.GamePieceManipulators.Coral;
+import frc.robot.subsystems.Actions.Wrist.Wrist;
 import frc.robot.subsystems.Drive.DriveSubsystem;
-import frc.robot.subsystems.Drive.LightHouse;
+import frc.robot.subsystems.Vision.LightHouse;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -59,8 +58,8 @@ public final class Constants {
 
     //These are the initialization of Kepler's motors
     public static final class Motors{
-      //public static final SparkMax m_cascade = new SparkMax(Constants.CascadeID, MotorType.kBrushless);
-      //public static final SparkMax m_cascade2 = new SparkMax(Constants.CascadeID2, MotorType.kBrushless);
+      public static final SparkMax m_cLead = new SparkMax(Constants.CascadeID, MotorType.kBrushless);
+      public static final SparkMax m_cFollower = new SparkMax(Constants.CascadeID2, MotorType.kBrushless);
       public static final SparkMax m_coral = new SparkMax(Constants.CoralID, MotorType.kBrushless);
       public static final SparkMax m_algae = new SparkMax(Constants.AlgaeID, MotorType.kBrushless);
       public static final SparkMax m_lift = new SparkMax(Constants.LiftID, MotorType.kBrushless);
@@ -84,14 +83,13 @@ public final class Constants {
       public static Wrist i_wrist = new Wrist();
       public static LightHouse i_lightHouse = new LightHouse();
       public static DriveSubsystem i_robotDrive = new DriveSubsystem();
-      public static LiftServo i_liftServo = new LiftServo();
       public static LEDController i_ledContronller = new LEDController();
     }
-
+//for who ever sees this we hadthe lift flipped at buc days lol so it kept getting caught remember CHECK YOUR ROTATION ;)
     public static class CascadeIO{
-      public static final boolean IS_INVERTED = false;
+      public static final boolean IS_INVERTED = true;
       public static final double ELEVATOR_PEAK_CURRENT_LIMIT = 60.0;
-      public static final double ELEVATOR_PEAK_MAXHEIGHT_LIMIT = 185.0;
+      public static final double ELEVATOR_PEAK_MAXHEIGHT_LIMIT = 190.0;
       public static final double ELEVATOR_PEAK_MINHEIGHT_LIMIT = -1;
     }
 
@@ -101,26 +99,26 @@ public final class Constants {
        *        Min: 0  Max: -185
       */
       public static final double cZero = 0;
-      public static final double cCoralL1 = -45;
-      public static final double cCoralL2 = -75;
-      public static final double cCoralL3 = -105;
-      public static final double cCoralL4 = -155.5;
-      public static final double cAlgaeL1 = 17;
-      public static final double cAlgaeL2 = 17;
-      public static final double cBarge = 17;
+      public static final double cCoralL1 = 55;
+      public static final double cCoralL2 = 67.5;
+      public static final double cCoralL3 = 101;
+      public static final double cCoralL4 = 151;
+      public static final double cAlgaeL1 = 80;
+      public static final double cAlgaeL2 = 130;
+      public static final double cBarge = 184;
 
       /*
        *         Wrist Postions
        *        Min: 0  Max: -11
       */
       public static final double wZero = 0;
-      public static final double wLevels = 6;
-      public static final double wAlgaeLevelGrab = 17;
+      public static final double wLevels = 7;
+      public static final double wAlgaeLevelGrab = 4;
       public static final double wAlgaeBarge = 7;
-      public static final double wAlgaeFloorIntake = 11;
+      public static final double wAlgaeFloorIntake = 12;
       public static final double wAlgaeProcessor = 7.3;
       public static final double wAlgaeHolder = 17;
-      public static final double wAlgaeLolipop = 17;
+      public static final double wAlgaeLolipop = 4;
     }
 
     public static final class DriveConstants {

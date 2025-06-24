@@ -1,0 +1,61 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Line Up J+I"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Track"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "iToFeed"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Line up K+L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Track"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "kToFeed"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Line Up A+B"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Track"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Left Autos",
+  "choreoAuto": false
+}

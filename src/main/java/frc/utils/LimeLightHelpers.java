@@ -693,7 +693,38 @@ public class LimeLightHelpers {
 
     /////
     /////
+    public static void SetRobotOrientation(String limelightName, double yaw, double yawRate, 
+        double pitch, double pitchRate, 
+        double roll, double rollRate) {
+        SetRobotOrientation_INTERNAL(limelightName, yaw, yawRate, pitch, pitchRate, roll, rollRate, true);
+    }
+    public static void SetRobotOrientation_NoFlush(String limelightName, double yaw, double yawRate, 
+    double pitch, double pitchRate, 
+    double roll, double rollRate) {
+    SetRobotOrientation_INTERNAL(limelightName, yaw, yawRate, pitch, pitchRate, roll, rollRate, false);
+}
 
+private static void SetRobotOrientation_INTERNAL(String limelightName, double yaw, double yawRate, 
+    double pitch, double pitchRate, 
+    double roll, double rollRate, boolean flush) {
+
+    double[] entries = new double[6];
+    entries[0] = yaw;
+    entries[1] = yawRate;
+    entries[2] = pitch;
+    entries[3] = pitchRate;
+    entries[4] = roll;
+    entries[5] = rollRate;
+    setLimelightNTDoubleArray(limelightName, "robot_orientation_set", entries);
+    if(flush)
+    {
+        Flush();
+    }
+}
+public static void Flush() {
+    NetworkTableInstance.getDefault().flush();
+}
+    
     public static Pose3d getBotPose3d(String limelightName) {
         double[] poseArray = getLimelightNTDoubleArray(limelightName, "botpose");
         return toPose3D(poseArray);

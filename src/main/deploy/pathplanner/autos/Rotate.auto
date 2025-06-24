@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Rotate"
+            "pathName": "MidRotate"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Tests",
   "choreoAuto": false
 }

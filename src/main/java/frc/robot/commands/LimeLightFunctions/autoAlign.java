@@ -20,9 +20,9 @@ public class autoAlign extends Command {
   private boolean strafe;
   private boolean turn;
 
-  private PIDController fowardController = new PIDController(2.5, 0, 0.001);
-  private PIDController strafeController = new PIDController(2.5, 0, 0.001);
-  private PIDController rotationController = new PIDController(.075, 0, 0.001);
+  private PIDController fowardController = new PIDController(1, 0, 0.001);
+  private PIDController strafeController = new PIDController(1, 0, 0.001);
+  private PIDController rotationController = new PIDController(.05, 0, 0.001);
 
   private static double bumperLength = .914;
   private static double bumperWidth = .914;
@@ -59,7 +59,7 @@ public class autoAlign extends Command {
   public void execute() {
     Pose3d pose = LimeLightHelpers.getTargetPose3d_RobotSpace("limelight-kepler");
     if (pose.getTranslation().getNorm() != 0 && pose.getRotation().getAngle() != 0 && pose.getTranslation().getNorm() <1.5) {
-      double rotationTarget = rotationController.calculate(Math.toDegrees(pose.getRotation().getY()),9);
+      double rotationTarget = rotationController.calculate(Math.toDegrees(pose.getRotation().getY()),0);
       double translationTarget = strafeController.calculate(pose.getX(), .35 * (rightSide ? -reefSeparation : reefSeparation));
       double fowardTarget = -fowardController.calculate(pose.getZ(), bumperLength);
       swerve.drive(new ChassisSpeeds(

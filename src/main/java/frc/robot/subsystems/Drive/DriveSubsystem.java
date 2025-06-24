@@ -8,6 +8,8 @@ package frc.robot.subsystems.Drive;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -23,18 +25,20 @@ import edu.wpi.first.wpilibj.Timer;
 import com.pathplanner.lib.config.RobotConfig;
 import frc.robot.Constants;
 
-//import com.ctre.phoenix6.swerve.SimSwerveDrivetrain.SimSwerveModule;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
+
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.ctre.phoenix6.hardware.core.CorePigeon2;
 
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.InitSubs;
+import frc.utils.LimeLightHelpers.PoseEstimate;
 import swervelib.SwerveDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -70,8 +74,8 @@ public class DriveSubsystem extends SubsystemBase {
   // The gyro sensor
   private Pigeon2 m_seagullGyro = new Pigeon2(2); 
   private PigeonIMU m_seagullIMU = new PigeonIMU(2);
-  public final PIDConstants pidTranslation = new PIDConstants(2.5, 0.0, 0);
-  public final PIDConstants pidRotation = new PIDConstants(.075, 0.0, 0);
+  public final PIDConstants pidTranslation = new PIDConstants(7, 0.0, .08);
+  public final PIDConstants pidRotation = new PIDConstants(4, 0.0, .03);
   
   //private SwerveDriveOdometry swerveOdometry = new SwerveDriveOdometry(DriveConstants.kDriveKinematics, getYaw(), );
 
@@ -105,12 +109,31 @@ public class DriveSubsystem extends SubsystemBase {
     );
   }
 
+    private final SwerveDrivePoseEstimator m_poseEstimator =
+      new SwerveDrivePoseEstimator(
+      DriveConstants.kDriveKinematics,
+      Rotation2d.fromDegrees(m_seagullIMU.getYaw()),
+      new SwerveModulePosition[] {
+        m_frontLeft.getPosition(),
+        m_frontRight.getPosition(),
+        m_rearLeft.getPosition(),
+        m_rearRight.getPosition()
+      },
+      new Pose2d(),
+      VecBuilder.fill(0.05, 0.05, Math.PI / 36), // State measurement standard deviations
+      VecBuilder.fill(0.5, 0.5, Math.PI / 6));  // Vision measurement standard deviations
+
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
     SmartDashboard.putNumber("GyroValue", getHeading());
-    SmartDashboard.putNumber("PIDTranslation", pidTranslation.kP+pidTranslation.kI+pidTranslation.kD);
-    SmartDashboard.putNumber("PIDRotation", pidRotation.kP+pidRotation.kI+pidRotation.kD);
+    m_poseEstimator.update(Rotation2d.fromDegrees(m_seagullIMU.getYaw()), 
+    new SwerveModulePosition[] {
+      m_frontLeft.getPosition(),
+      m_frontRight.getPosition(),
+      m_rearLeft.getPosition(),
+      m_rearRight.getPosition()
+  });
     m_odometry.update(
         Rotation2d.fromDegrees(m_seagullIMU.getYaw()),
         new SwerveModulePosition[] {
@@ -309,7 +332,7 @@ public class DriveSubsystem extends SubsystemBase {
 private void drive(ChassisSpeeds speeds, boolean fieldRelative) {
     if (fieldRelative)
         speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
-    speeds = ChassisSpeeds.discretize(speeds, 2); //LoggedRobot.defaultPeriodSecs
+    speeds = ChassisSpeeds.discretize(speeds, .01); //LoggedRobot.defaultPeriodSecs
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     setModuleStates(swerveModuleStates);

@@ -6,7 +6,7 @@ package frc.robot.commands.LimeLightFunctions;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.InitSubs;
-import frc.robot.subsystems.Drive.LightHouse;
+import frc.robot.subsystems.Vision.LightHouse;
 import frc.utils.LimeLightHelpers;
 
 /* You should consider using the more terse Co
